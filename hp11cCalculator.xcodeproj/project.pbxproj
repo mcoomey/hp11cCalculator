@@ -12,6 +12,7 @@
 		4C554BF1201D417800611B02 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4C554BEF201D417800611B02 /* Main.storyboard */; };
 		4C554BF3201D417800611B02 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4C554BF2201D417800611B02 /* Assets.xcassets */; };
 		4C554BF6201D417800611B02 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4C554BF4201D417800611B02 /* LaunchScreen.storyboard */; };
+		4C554BFF201D862B00611B02 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C554BFE201D862B00611B02 /* Default-568h@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +23,7 @@
 		4C554BF2201D417800611B02 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4C554BF5201D417800611B02 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4C554BF7201D417800611B02 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4C554BFE201D862B00611B02 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -38,6 +40,7 @@
 		4C554BDF201D417800611B02 = {
 			isa = PBXGroup;
 			children = (
+				4C554BFE201D862B00611B02 /* Default-568h@2x.png */,
 				4C554BEA201D417800611B02 /* hp11cCalculator */,
 				4C554BE9201D417800611B02 /* Products */,
 			);
@@ -54,12 +57,12 @@
 		4C554BEA201D417800611B02 /* hp11cCalculator */ = {
 			isa = PBXGroup;
 			children = (
-				4C554BEB201D417800611B02 /* AppDelegate.swift */,
 				4C554BED201D417800611B02 /* ViewController.swift */,
+				4C554BF7201D417800611B02 /* Info.plist */,
 				4C554BEF201D417800611B02 /* Main.storyboard */,
+				4C554BEB201D417800611B02 /* AppDelegate.swift */,
 				4C554BF2201D417800611B02 /* Assets.xcassets */,
 				4C554BF4201D417800611B02 /* LaunchScreen.storyboard */,
-				4C554BF7201D417800611B02 /* Info.plist */,
 			);
 			path = hp11cCalculator;
 			sourceTree = "<group>";
@@ -124,6 +127,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4C554BF6201D417800611B02 /* LaunchScreen.storyboard in Resources */,
+				4C554BFF201D862B00611B02 /* Default-568h@2x.png in Resources */,
 				4C554BF3201D417800611B02 /* Assets.xcassets in Resources */,
 				4C554BF1201D417800611B02 /* Main.storyboard in Resources */,
 			);
