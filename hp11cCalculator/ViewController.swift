@@ -10,6 +10,7 @@ import UIKit
 
 class ViewController: UIViewController {
 
+    @IBOutlet weak var display: UILabel!
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -20,6 +21,26 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
+    let impact = UIImpactFeedbackGenerator()
+    let selection = UISelectionFeedbackGenerator()
+    let notification = UINotificationFeedbackGenerator()
+    
+    
+    
+    @IBAction func clearPressed(_ sender: UIButton) {
+        impact.impactOccurred()
+        display.text = "0.0"
+    }
+    
+    
+    @IBAction func onPressed(_ sender: UIButton) {
+        impact.impactOccurred()
+//        selection.selectionChanged()
+//        notification.notificationOccurred(.error)
+        display.text = "01234567890123456789"
 
+    
+    }
+    
 }
 
