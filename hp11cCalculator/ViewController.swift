@@ -29,7 +29,7 @@ class ViewController: UIViewController {
     
     @IBAction func clearPressed(_ sender: UIButton) {
         impact.impactOccurred()
-        display.text = "0.0"
+        display.text = "0.00"
     }
     
     
