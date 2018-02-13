@@ -27,13 +27,14 @@ class ViewController: UIViewController {
     
     
     
-    @IBAction func clearPressed(_ sender: UIButton) {
+    @IBAction func clearDown(_ sender: UIButton) {
         impact.impactOccurred()
         display.text = "0.00"
     }
     
     
-    @IBAction func onPressed(_ sender: UIButton) {
+    @IBAction func onDown(_ sender: UIButton) {
+
         impact.impactOccurred()
 //        selection.selectionChanged()
 //        notification.notificationOccurred(.error)
