@@ -45,7 +45,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var key39: UIButton! // 3
     @IBOutlet weak var key30: UIButton! // -
     
-    @IBOutlet weak var key41: UIButton! // on
+    @IBOutlet weak var key41: UIButton! // ON
     @IBOutlet weak var key42: UIButton! // f
     @IBOutlet weak var key43: UIButton! // g
     @IBOutlet weak var key44: UIButton! // sto
@@ -98,48 +98,48 @@ class ViewController: UIViewController {
     @IBOutlet weak var fkey49: UILabel! // L.R.
     @IBOutlet weak var fkey40: UILabel! // x=y
     
-    @IBOutlet weak var gkey11: UILabel!
-    @IBOutlet weak var gkey12: UILabel!
-    @IBOutlet weak var gkey13: UILabel!
-    @IBOutlet weak var gkey14: UILabel!
-    @IBOutlet weak var gkey15: UILabel!
-    @IBOutlet weak var gkey16: UILabel!
-    @IBOutlet weak var gkey17: UILabel!
-    @IBOutlet weak var gkey18: UILabel!
-    @IBOutlet weak var gkey19: UILabel!
-    @IBOutlet weak var gkey10: UILabel!
+    @IBOutlet weak var gkey11: UILabel! // x²
+    @IBOutlet weak var gkey12: UILabel! // LN
+    @IBOutlet weak var gkey13: UILabel! // LOG
+    @IBOutlet weak var gkey14: UILabel! // %
+    @IBOutlet weak var gkey15: UILabel! // Δ%
+    @IBOutlet weak var gkey16: UILabel! // ABS
+    @IBOutlet weak var gkey17: UILabel! // DEG
+    @IBOutlet weak var gkey18: UILabel! // RAD
+    @IBOutlet weak var gkey19: UILabel! // GRD
+    @IBOutlet weak var gkey10: UILabel! // x<0
     
-    @IBOutlet weak var gkey21: UILabel!
-    @IBOutlet weak var gkey22: UILabel!
-    @IBOutlet weak var gkey23: UILabel!
-    @IBOutlet weak var gkey24: UILabel!
-    @IBOutlet weak var gkey25: UILabel!
-    @IBOutlet weak var gkey26: UILabel!
-    @IBOutlet weak var gkey27: UILabel!
-    @IBOutlet weak var gkey28: UILabel!
-    @IBOutlet weak var gkey29: UILabel!
-    @IBOutlet weak var gkey20: UILabel!
+    @IBOutlet weak var gkey21: UILabel! // BST
+    @IBOutlet weak var gkey22: UILabel! // HYP⁻¹
+    @IBOutlet weak var gkey23: UILabel! // SIN⁻¹
+    @IBOutlet weak var gkey24: UILabel! // COS⁻¹
+    @IBOutlet weak var gkey25: UILabel! // TAN⁻¹
+    @IBOutlet weak var gkey26: UILabel! // →P
+    @IBOutlet weak var gkey27: UILabel! // SF
+    @IBOutlet weak var gkey28: UILabel! // CF
+    @IBOutlet weak var gkey29: UILabel! // F?
+    @IBOutlet weak var gkey20: UILabel! // x>0
     
-    @IBOutlet weak var gkey31: UILabel!
-    @IBOutlet weak var gkey32: UILabel!
-    @IBOutlet weak var gkey33: UILabel!
-    @IBOutlet weak var gkey34: UILabel!
-    @IBOutlet weak var gkey35: UILabel!
-    @IBOutlet weak var gkey37: UILabel!
-    @IBOutlet weak var gkey38: UILabel!
-    @IBOutlet weak var gkey39: UILabel!
-    @IBOutlet weak var gkey30: UILabel!
-    
-    @IBOutlet weak var gkey41: UILabel!
-    @IBOutlet weak var gkey42: UILabel!
-    @IBOutlet weak var gkey43: UILabel!
-    @IBOutlet weak var gkey44: UILabel!
-    @IBOutlet weak var gkey45: UILabel!
-    @IBOutlet weak var gkey46: UILabel!
-    @IBOutlet weak var gkey47: UILabel!
-    @IBOutlet weak var gkey48: UILabel!
-    @IBOutlet weak var gkey49: UILabel!
-    @IBOutlet weak var gkey40: UILabel!
+    @IBOutlet weak var gkey31: UILabel! // P/R
+    @IBOutlet weak var gkey32: UILabel! // RTN
+    @IBOutlet weak var gkey33: UILabel! // R↑
+    @IBOutlet weak var gkey34: UILabel! // RND
+    @IBOutlet weak var gkey35: UILabel! // CLx
+    @IBOutlet weak var gkey37: UILabel! // Cy,x
+    @IBOutlet weak var gkey38: UILabel! // →H
+    @IBOutlet weak var gkey39: UILabel! // →DEG
+    @IBOutlet weak var gkey30: UILabel! // x≠0
+
+    @IBOutlet weak var gkey41: UILabel! //
+    @IBOutlet weak var gkey42: UILabel! //
+    @IBOutlet weak var gkey43: UILabel! //
+    @IBOutlet weak var gkey44: UILabel! // FINT
+    @IBOutlet weak var gkey45: UILabel! // MEM
+    @IBOutlet weak var gkey46: UILabel! // LST x
+    @IBOutlet weak var gkey47: UILabel! // x̄
+    @IBOutlet weak var gkey48: UILabel! // s
+    @IBOutlet weak var gkey49: UILabel! // Σ-
+    @IBOutlet weak var gkey40: UILabel! // x=0
 
     let impact = UIImpactFeedbackGenerator()
     let selection = UISelectionFeedbackGenerator()
@@ -165,9 +165,36 @@ class ViewController: UIViewController {
     
     var functionmode = keymode.normalmode
     
+    var userIsInTheMiddleOfTyping = false
+    var userHasTypedDecimalPoint = false
+    var resultIsPending = false
+    
+    var displayValue: Double {
+        get {
+            return Double(display.text!)!
+        }
+        set {
+            display.text = String(newValue)
+        }
+    }
+    
+    var fixedDecimalPlaces = 2
+    
+    enum degreeUnits {
+        case degrees
+        case radians
+        case grads
+    }
+
+    var displayDegreesUnits = degreeUnits.degrees
+    
+    var operandStack: [Double] = [0.0, 0.0, 0.0, 0.0]
+    var storageRegister: [Double] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("viewDidLoad")
         UIView.setAnimationsEnabled(false)  // animation just slows the display!
 
         keys = [key11, key12, key13, key14, key15, key16, key17, key18, key19, key10,
@@ -210,10 +237,51 @@ class ViewController: UIViewController {
     }
 
     
+    @IBAction func touchDigit(_ sender: UIButton) {
+        impact.impactOccurred()
+        if functionmode == keymode.normalmode {
+            let digit = sender.currentTitle!
+            if userIsInTheMiddleOfTyping {
+                let textCurrentlyInDisplay = display.text!
+                display.text = textCurrentlyInDisplay + digit
+            } else {
+                display.text = digit
+                userIsInTheMiddleOfTyping = true
+            }
+        
+        }
+    }
+    
+    @IBAction func touchDecimalPoint(_ sender: UIButton) {
+        impact.impactOccurred()
+        if functionmode == keymode.normalmode {
+            if !userHasTypedDecimalPoint {
+                if userIsInTheMiddleOfTyping {
+                    let textCurrentlyInDisplay = display.text!
+                    display.text = textCurrentlyInDisplay + "."
+                } else {
+                    display.text = "0."
+                    userIsInTheMiddleOfTyping = true
+                }
+                userHasTypedDecimalPoint = true
+            }
+        }
+    }
+    
+    @IBAction func touchEnter(_ sender: UIButton) {
+        impact.impactOccurred()
+        if functionmode == keymode.normalmode {
+            userIsInTheMiddleOfTyping = false
+            userHasTypedDecimalPoint = false
+        }
+    }
+    
     
     @IBAction func clearDown(_ sender: UIButton) {
         impact.impactOccurred()
         display.text = "0.00"
+        userIsInTheMiddleOfTyping = false
+        userHasTypedDecimalPoint = false
     }
     
     
