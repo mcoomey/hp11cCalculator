@@ -11,6 +11,7 @@ import UIKit
 class ViewController: UIViewController {
 
     @IBOutlet weak var display: UILabel!
+    @IBOutlet weak var modeDisplay: UILabel!
     
     @IBOutlet weak var key11: UIButton! // sqrt
     @IBOutlet weak var key12: UIButton! // e^x
@@ -145,57 +146,89 @@ class ViewController: UIViewController {
     let selection = UISelectionFeedbackGenerator()
     let notification = UINotificationFeedbackGenerator()
     
-    var keys = [UIButton]() // Empty UIButton array
-    var fkeys = [UILabel]() // Empty UILabel array
-    var gkeys = [UILabel]() // Empty UILabel array
+    // current state of calculator power switch
+    var calculatorPowerOn = true
+    
+    // current display mode settings
+    var curNumDisplayModePlaces = 4
+    let numberFormatter = NumberFormatter()
 
+    // UIButton arrays to be loaded after view loads
+    var keys = [UIButton]()
+    var fkeys = [UILabel]()
+    var gkeys = [UILabel]()
+
+    // vars to hold the text colors for the alt function keys
     var keyTextColor: UIColor!
     var fkeyTextColor: UIColor!
     var gkeyTextColor: UIColor!
     
+    // String Arrays to hold UIButton titles based on alt function selected
     var keyTitles = [String]()
     var fkeyText = [String]()
     var gkeyText = [String]()
 
+    // the currently selected alt function or normal mode
     enum keymode {
         case normalmode
         case fkeymode
         case gkeymode
     }
-    
     var functionmode = keymode.normalmode
     
-    var userIsInTheMiddleOfTyping = false
-    var userHasTypedDecimalPoint = false
-    var resultIsPending = false
-    
-    var displayValue: Double {
-        get {
-            return Double(display.text!)!
-        }
-        set {
-            display.text = String(newValue)
-        }
-    }
-    
-    var fixedDecimalPlaces = 2
-    
+    // set up defaut display modes
     enum degreeUnits {
         case degrees
         case radians
         case grads
     }
-
     var displayDegreesUnits = degreeUnits.degrees
     
-    var operandStack: [Double] = [0.0, 0.0, 0.0, 0.0]
-    var storageRegister: [Double] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    enum numberMode {
+        case fix
+        case sci
+        case eng
+    }
     
+    var displayNumberMode = numberMode.fix
+    var fixedDecimalPlaces = 2
     
+    // set up vars to handle user input
+
+    // inputBuffer stores user input as they type
+    var inputBuffer: String = ""
     
+    // command buffer holds multi-key command input
+    var commandBuffer: [String] = []
+    
+    enum typingInputMode {
+        case idle
+        case typingWholePart
+        case typingFracPart
+        case typingExponPart
+        case pendingKeystroke
+    }
+    
+    var userTypingInputMode: typingInputMode = typingInputMode.idle
+
+    // CalculatorBrain is the Model for the app
+    
+    private var brain = CalculatorBrain()
+    
+    // when the view loads build arrays of labels and buttons
     override func viewDidLoad() {
         super.viewDidLoad()
         UIView.setAnimationsEnabled(false)  // animation just slows the display!
+        
+        // set up default number display format
+        numberFormatter.usesSignificantDigits = false
+        numberFormatter.minimumFractionDigits = curNumDisplayModePlaces
+        numberFormatter.maximumFractionDigits = curNumDisplayModePlaces
+        numberFormatter.usesGroupingSeparator = true
+        numberFormatter.groupingSize = 3
+        numberFormatter.groupingSeparator = ","
+        numberFormatter.numberStyle = NumberFormatter.Style.decimal
+
 
         keys = [key11, key12, key13, key14, key15, key16, key17, key18, key19, key10,
                 key21, key22, key23, key24, key25, key26, key27, key28, key29, key20,
@@ -228,6 +261,9 @@ class ViewController: UIViewController {
             gkeyText.append(gkey.text!)
         }
         
+        inputBuffer = ""
+        display.text = numberFormatter.string(for: brain.stack.top())!
+        print("inputBuffer = \(inputBuffer)")
 
     }
 
@@ -236,61 +272,304 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
+    // format the display during user input with proper thousands separators
     
+    func addCommasToDisplayBuffer(_ buffer: String) -> String {
+        var formattedDisplay: String = buffer
+        var idx: Int
+        
+        if let dpIndex = inputBuffer.index(of: ".") {
+            idx = dpIndex.encodedOffset - 3
+        } else if let dpIndex = inputBuffer.index(of: "e") {
+            idx = dpIndex.encodedOffset - 3
+        } else {
+            idx = formattedDisplay.count - 3
+        }
+        
+        var limit = 0
+        if inputBuffer.first == "-" {
+            limit = 1
+        }
+        while (idx > limit) {
+            formattedDisplay.insert(",", at: formattedDisplay.index(formattedDisplay.startIndex, offsetBy:idx))
+            idx -= 3
+        }
+        return formattedDisplay
+    }
+    
+    // set up display mode as input by user
+    
+    func setDisplayMode(mode: [String]) {
+        print("Setting displayMode: \(mode)")
+        fixedDecimalPlaces = Int(mode[1])!
+        switch mode[0] {
+        case "FIX":
+            displayNumberMode = numberMode.fix
+        case "SCI":
+            displayNumberMode = numberMode.sci
+        case "ENG":
+            displayNumberMode = numberMode.eng
+        default:
+            print("Error setting display mode")
+        }
+    }
+
     @IBAction func touchDigit(_ sender: UIButton) {
         impact.impactOccurred()
         if functionmode == keymode.normalmode {
             let digit = sender.currentTitle!
-            if userIsInTheMiddleOfTyping {
-                let textCurrentlyInDisplay = display.text!
-                display.text = textCurrentlyInDisplay + digit
-            } else {
-                display.text = digit
-                userIsInTheMiddleOfTyping = true
+            
+            switch userTypingInputMode {
+            case .idle:
+                inputBuffer = digit
+                display.text = addCommasToDisplayBuffer(inputBuffer)
+                userTypingInputMode = .typingWholePart
+            case .typingWholePart:
+                inputBuffer.append(digit)
+                display.text = addCommasToDisplayBuffer(inputBuffer)
+            case .typingFracPart:
+                inputBuffer.append(digit)
+                display.text = addCommasToDisplayBuffer(inputBuffer)
+            case .typingExponPart:
+                inputBuffer.append(digit)
+                // if user types more than 2 exponent digits then drop the first one
+                if let i = inputBuffer.range(of: "e-") {
+                    if inputBuffer[i.upperBound...].count > 2 {
+                        inputBuffer.remove(at: i.upperBound)
+                    }
+                } else if let i = inputBuffer.range(of: "e") {
+                    if inputBuffer[i.upperBound...].count > 2 {
+                        inputBuffer.remove(at: i.upperBound)
+                    }
+                }
+              
+                display.text = addCommasToDisplayBuffer(inputBuffer)
+
+            case .pendingKeystroke:
+                commandBuffer.append(sender.currentTitle!)
+                let displayCommands = ["FIX", "SCI", "ENG"]
+                let registerCommands = ["STO", "RCL"]
+                
+                if displayCommands.contains(commandBuffer[0]){
+                    setDisplayMode(mode: commandBuffer)
+                    
+                } else if registerCommands.contains(commandBuffer[0]){
+                    // do register command
+                    print ("Perform register operation: \(commandBuffer)")
+                }
+                userTypingInputMode = .idle
+                commandBuffer.removeAll()
+                
             }
+            
+        } else {  // *** in development: commandBuffer
+            let compoundCommands = ["FIX", "SCI", "ENG", "STO", "RCL"]
+            let command = sender.currentTitle!
+            if compoundCommands.contains(command){
+                commandBuffer.append(sender.currentTitle!)
+                userTypingInputMode = .pendingKeystroke
+                print("commandBuffer = \(commandBuffer)")
+            } else {
+                print("Performing  command: \(sender.currentTitle!)")
+                performEnteredCommand(sender)
+            }
+            functionmode = keymode.normalmode
+            updateKeyTitles()
+        }
+        print("inputBuffer = \(inputBuffer)")
+        print("inputMode = \(userTypingInputMode)")
         
+    }
+    
+    @IBAction func touchCHS(_ sender: UIButton) {
+        impact.impactOccurred()
+        if functionmode == keymode.normalmode {
+            switch userTypingInputMode {
+            case .idle:
+                // if user is not typing input then the operand is on the stack
+                if brain.stack.top() != 0.0 {
+                    brain.stack.push(brain.stack.pop() * -1.0)
+                }
+                 print("brain.stack = \(brain.stack)")
+                display.text = numberFormatter.string(for: brain.stack.top())!
+            case .typingWholePart, .typingFracPart:
+                let testNonZero = inputBuffer.filter{$0 != "0" && $0 != "."}
+                if !testNonZero.isEmpty {
+                    if inputBuffer.first == "-" {
+                        inputBuffer.remove(at: inputBuffer.startIndex)
+                    } else {
+                        inputBuffer = "-" + inputBuffer
+                    }
+                }
+                display.text = addCommasToDisplayBuffer(inputBuffer)
+            case .typingExponPart:
+                if let idx = inputBuffer.range(of: "e-") {
+                    inputBuffer.remove(at: inputBuffer.index(idx.upperBound, offsetBy:-1))
+                } else if let idx = inputBuffer.range(of: "e") {
+                    inputBuffer.insert("-", at: idx.upperBound)
+                }
+                display.text = addCommasToDisplayBuffer(inputBuffer)
+                
+            case .pendingKeystroke:
+                commandBuffer.append(sender.currentTitle!)
+                userTypingInputMode = .idle
+                print("commandBuffer = \(commandBuffer)")
+                commandBuffer.removeAll()
+            }
+            
+        } else {
+            performEnteredCommand(sender)
         }
     }
     
     @IBAction func touchDecimalPoint(_ sender: UIButton) {
         impact.impactOccurred()
         if functionmode == keymode.normalmode {
-            if !userHasTypedDecimalPoint {
-                if userIsInTheMiddleOfTyping {
-                    let textCurrentlyInDisplay = display.text!
-                    display.text = textCurrentlyInDisplay + "."
-                } else {
-                    display.text = "0."
-                    userIsInTheMiddleOfTyping = true
-                }
-                userHasTypedDecimalPoint = true
-            }
+            switch userTypingInputMode {
+            case .idle:
+                inputBuffer = "0."
+                display.text = addCommasToDisplayBuffer(inputBuffer)
+                userTypingInputMode = .typingFracPart
+            case .typingWholePart:
+                inputBuffer.append(".")
+                userTypingInputMode = .typingFracPart
+                display.text = addCommasToDisplayBuffer(inputBuffer)
+            case .typingFracPart:
+                display.text = addCommasToDisplayBuffer(inputBuffer)
+            case .typingExponPart:
+                display.text = addCommasToDisplayBuffer(inputBuffer)
+            case .pendingKeystroke:
+                commandBuffer.append(".")
+           }
+        } else {
+            performEnteredCommand(sender)
         }
     }
+    
+    @IBAction func touchBackspace(_ sender: UIButton) {
+        impact.impactOccurred()
+        if functionmode == keymode.normalmode {
+            if (userTypingInputMode == .idle){
+                display.text = numberFormatter.string(for: 0.0)!
+            } else if (inputBuffer.count > 0) {
+                let removedChar = inputBuffer.removeLast()
+                
+                if inputBuffer.isEmpty {
+                    inputBuffer = numberFormatter.string(for: 0.0)!
+                    userTypingInputMode = .idle
+                    print ("inputBuffer was empty!")
+                } else if (removedChar == "e") {
+                    if (inputBuffer.index(of: ".")==nil) {
+                        userTypingInputMode = .typingWholePart
+                    } else {
+                        userTypingInputMode = .typingFracPart
+                    }
+                } else if (removedChar == ".") {
+                    userTypingInputMode = .typingWholePart
+                }
+                display.text = addCommasToDisplayBuffer(inputBuffer)
+            }
+            print("inputMode = \(userTypingInputMode)")
+        } else {
+            performEnteredCommand(sender)
+        }
+    }
+    
+    
+    @IBAction func touchEEX(_ sender: UIButton) {
+        impact.impactOccurred()
+        if functionmode == keymode.normalmode {
+            switch userTypingInputMode {
+            case .idle:
+                inputBuffer = "1e"
+                display.text = addCommasToDisplayBuffer(inputBuffer)
+            case .typingWholePart:
+                if (inputBuffer.filter{($0 != "0")&&($0 != ",")}).isEmpty {
+                    inputBuffer = "1e"
+                } else {
+                    inputBuffer.append("e")
+                }
+                display.text = addCommasToDisplayBuffer(inputBuffer)
+            case .typingFracPart:
+                inputBuffer.append("e")
+                display.text = addCommasToDisplayBuffer(inputBuffer)
+            case .typingExponPart:
+                display.text = addCommasToDisplayBuffer(inputBuffer)
+            case .pendingKeystroke:
+                print("pendingKeystroke")
+            }
+            userTypingInputMode = .typingExponPart
+            print("inputBuffer = \(inputBuffer)")
+            print("inputMode = \(userTypingInputMode)")
+        } else {
+            performEnteredCommand(sender)
+        }
+    }
+    
+    
     
     @IBAction func touchEnter(_ sender: UIButton) {
         impact.impactOccurred()
         if functionmode == keymode.normalmode {
-            userIsInTheMiddleOfTyping = false
-            userHasTypedDecimalPoint = false
+            userTypingInputMode = .idle
+            if inputBuffer == "" {
+                brain.stack.push(brain.stack.top())
+            } else {
+                brain.stack.push(Double(inputBuffer)!)
+            }
+            display.text = numberFormatter.string(for: brain.stack.top())!
+            print("brain.stack = \(brain.stack)")
+            print("inputMode = \(userTypingInputMode)")
         }
     }
     
-    
-    @IBAction func clearDown(_ sender: UIButton) {
+    @IBAction func touchOtherCommand(_ sender: UIButton) {
         impact.impactOccurred()
-        display.text = "0.00"
-        userIsInTheMiddleOfTyping = false
-        userHasTypedDecimalPoint = false
+        performEnteredCommand(sender)
     }
     
-    
-    @IBAction func onDown(_ sender: UIButton) {
+    @IBAction func touchRegisterCommand(_ sender: UIButton) {
         impact.impactOccurred()
-        display.text = "01234567890123456789"
-
-    
+        if functionmode == keymode.normalmode {
+            userTypingInputMode = .pendingKeystroke
+            commandBuffer.append(sender.currentTitle!)
+            
+        } else {
+            performEnteredCommand(sender)
+        }
     }
+    
+    @IBAction func touchOn(_ sender: UIButton) {
+        impact.impactOccurred()
+        if calculatorPowerOn {
+            calculatorPowerOn = false
+            display.text = " "
+            modeDisplay.text = " "
+        } else {
+            calculatorPowerOn = true
+            modeDisplay.text = "degrees"
+        }
+    }
+    
+    @IBAction func performEnteredCommand(_ sender: UIButton) {
+        if userTypingInputMode != .idle {
+            brain.stack.push(Double(inputBuffer)!)
+            userTypingInputMode = .idle
+        }
+        commandBuffer.append(sender.currentTitle!)
+        if brain.performOperation(command: commandBuffer) {
+            display.text = numberFormatter.string(for: brain.stack.top())!
+        } else {
+            display.text = "Error"
+        }
+        
+        print("brain.stack = \(brain.stack)")
+        inputBuffer.removeAll()
+        commandBuffer.removeAll()
+        functionmode = keymode.normalmode
+        updateKeyTitles()
+    }
+    
     
     func updateKeyTitles() {
         switch functionmode {
@@ -335,6 +614,7 @@ class ViewController: UIViewController {
                 gkey.textColor = keyTextColor
             }
         }
+        
         
         
     }
