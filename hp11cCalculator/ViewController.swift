@@ -263,7 +263,6 @@ class ViewController: UIViewController {
         
         inputBuffer = ""
         display.text = numberFormatter.string(for: brain.stack.top())!
-        print("inputBuffer = \(inputBuffer)")
 
     }
 
@@ -272,6 +271,17 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
+    // print out the debug info to the console
+    func printDebugInfo(message: String = "") {
+        print("==================================\(message)==========================================")
+        print ("inputBuffer = \(inputBuffer)")
+        print("inputMode = \(userTypingInputMode)")
+        print("brain.stack = \(brain.stack)")
+        print("commandBuffer = \(commandBuffer)")
+        print("storageRegisters = \(brain.storageRegister)")
+        print("altStorageRegisters = \(brain.altStorageRegister)")
+    }
+    
     // format the display during user input with proper thousands separators
     
     func addCommasToDisplayBuffer(_ buffer: String) -> String {
@@ -346,6 +356,8 @@ class ViewController: UIViewController {
                 display.text = addCommasToDisplayBuffer(inputBuffer)
 
             case .pendingKeystroke:
+                // all pendingKeystroke commands are terminated with a digit input
+                userTypingInputMode = .idle
                 commandBuffer.append(sender.currentTitle!)
                 let displayCommands = ["FIX", "SCI", "ENG"]
                 let registerCommands = ["STO", "RCL"]
@@ -355,30 +367,24 @@ class ViewController: UIViewController {
                     
                 } else if registerCommands.contains(commandBuffer[0]){
                     // do register command
-                    print ("Perform register operation: \(commandBuffer)")
+                    performEnteredCommand(sender)
                 }
-                userTypingInputMode = .idle
                 commandBuffer.removeAll()
-                
             }
             
-        } else {  // *** in development: commandBuffer
+        } else {  // alternate function key was typed
             let compoundCommands = ["FIX", "SCI", "ENG", "STO", "RCL"]
             let command = sender.currentTitle!
             if compoundCommands.contains(command){
                 commandBuffer.append(sender.currentTitle!)
                 userTypingInputMode = .pendingKeystroke
-                print("commandBuffer = \(commandBuffer)")
             } else {
-                print("Performing  command: \(sender.currentTitle!)")
                 performEnteredCommand(sender)
             }
             functionmode = keymode.normalmode
             updateKeyTitles()
         }
-        print("inputBuffer = \(inputBuffer)")
-        print("inputMode = \(userTypingInputMode)")
-        
+        printDebugInfo()
     }
     
     @IBAction func touchCHS(_ sender: UIButton) {
@@ -390,7 +396,6 @@ class ViewController: UIViewController {
                 if brain.stack.top() != 0.0 {
                     brain.stack.push(brain.stack.pop() * -1.0)
                 }
-                 print("brain.stack = \(brain.stack)")
                 display.text = numberFormatter.string(for: brain.stack.top())!
             case .typingWholePart, .typingFracPart:
                 let testNonZero = inputBuffer.filter{$0 != "0" && $0 != "."}
@@ -413,13 +418,13 @@ class ViewController: UIViewController {
             case .pendingKeystroke:
                 commandBuffer.append(sender.currentTitle!)
                 userTypingInputMode = .idle
-                print("commandBuffer = \(commandBuffer)")
                 commandBuffer.removeAll()
             }
             
-        } else {
+        } else {  // alternate function key was typed
             performEnteredCommand(sender)
         }
+        printDebugInfo()
     }
     
     @IBAction func touchDecimalPoint(_ sender: UIButton) {
@@ -441,9 +446,11 @@ class ViewController: UIViewController {
             case .pendingKeystroke:
                 commandBuffer.append(".")
            }
-        } else {
+            
+        } else {  // alternate function key was typed
             performEnteredCommand(sender)
         }
+        printDebugInfo()
     }
     
     @IBAction func touchBackspace(_ sender: UIButton) {
@@ -469,10 +476,11 @@ class ViewController: UIViewController {
                 }
                 display.text = addCommasToDisplayBuffer(inputBuffer)
             }
-            print("inputMode = \(userTypingInputMode)")
-        } else {
+            
+        } else {  // alternate function key was typed
             performEnteredCommand(sender)
         }
+        printDebugInfo()
     }
     
     
@@ -499,11 +507,11 @@ class ViewController: UIViewController {
                 print("pendingKeystroke")
             }
             userTypingInputMode = .typingExponPart
-            print("inputBuffer = \(inputBuffer)")
-            print("inputMode = \(userTypingInputMode)")
-        } else {
+            
+        } else {  // alternate function key was typed
             performEnteredCommand(sender)
         }
+        printDebugInfo()
     }
     
     
@@ -518,25 +526,35 @@ class ViewController: UIViewController {
                 brain.stack.push(Double(inputBuffer)!)
             }
             display.text = numberFormatter.string(for: brain.stack.top())!
-            print("brain.stack = \(brain.stack)")
-            print("inputMode = \(userTypingInputMode)")
+            
+        } else {  // alternate function key was typed
+            performEnteredCommand(sender)
         }
+        printDebugInfo()
     }
     
     @IBAction func touchOtherCommand(_ sender: UIButton) {
         impact.impactOccurred()
         performEnteredCommand(sender)
+        printDebugInfo()
     }
     
     @IBAction func touchRegisterCommand(_ sender: UIButton) {
         impact.impactOccurred()
         if functionmode == keymode.normalmode {
             userTypingInputMode = .pendingKeystroke
+            commandBuffer.removeAll()
             commandBuffer.append(sender.currentTitle!)
             
-        } else {
+        } else {  // alternate function key was typed
             performEnteredCommand(sender)
         }
+        printDebugInfo()
+    }
+    
+    @IBAction func touchXexchangeY(_ sender: UIButton) {
+        impact.impactOccurred()
+        performEnteredCommand(sender)
     }
     
     @IBAction func touchOn(_ sender: UIButton) {
@@ -552,18 +570,32 @@ class ViewController: UIViewController {
     }
     
     @IBAction func performEnteredCommand(_ sender: UIButton) {
+        printDebugInfo(message: "-->performEnteredCommand(\(sender.currentTitle!))")
+        print("performEnteredCommand:\(sender.currentTitle!)")
+
+        // if user was typing input then push it onto the stack
         if userTypingInputMode != .idle {
-            brain.stack.push(Double(inputBuffer)!)
+            if let currentInput = Double(inputBuffer) {
+                brain.stack.push(currentInput)
+            } else {
+                brain.stack.push(0.0)
+            }
             userTypingInputMode = .idle
         }
-        commandBuffer.append(sender.currentTitle!)
+
+        // now perform operation and update the display
+        // commandBuffer will be empty for single-keystroke commands
+        
+        if commandBuffer.isEmpty {
+            commandBuffer.append(sender.currentTitle!)
+        }
         if brain.performOperation(command: commandBuffer) {
             display.text = numberFormatter.string(for: brain.stack.top())!
         } else {
             display.text = "Error"
         }
-        
-        print("brain.stack = \(brain.stack)")
+
+        printDebugInfo()
         inputBuffer.removeAll()
         commandBuffer.removeAll()
         functionmode = keymode.normalmode

@@ -351,6 +351,9 @@
                                                         <state key="normal" title="X⇄Y">
                                                             <color key="titleColor" white="0.66666666669999997" alpha="1" colorSpace="calibratedWhite"/>
                                                         </state>
+                                                        <connections>
+                                                            <action selector="touchXexchangeY:" destination="BYZ-38-t0r" eventType="touchDown" id="J2O-ds-9qj"/>
+                                                        </connections>
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NB7-FE-6Or">
                                                         <rect key="frame" x="280" y="0.0" width="54" height="34"/>
