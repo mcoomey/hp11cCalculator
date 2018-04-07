@@ -590,9 +590,6 @@
                                                         <state key="normal" title="÷">
                                                             <color key="titleColor" white="0.66666666669999997" alpha="1" colorSpace="calibratedWhite"/>
                                                         </state>
-                                                        <connections>
-                                                            <action selector="touchOtherCommand:" destination="BYZ-38-t0r" eventType="touchDown" id="IUX-gL-TAi"/>
-                                                        </connections>
                                                     </button>
                                                 </subviews>
                                             </stackView>
@@ -706,9 +703,6 @@
                                                         <state key="normal" title="×">
                                                             <color key="titleColor" white="0.66666666669999997" alpha="1" colorSpace="calibratedWhite"/>
                                                         </state>
-                                                        <connections>
-                                                            <action selector="touchOtherCommand:" destination="BYZ-38-t0r" eventType="touchDown" id="0cw-Aw-kn6"/>
-                                                        </connections>
                                                     </button>
                                                 </subviews>
                                             </stackView>
@@ -822,9 +816,6 @@
                                                         <state key="normal" title="−">
                                                             <color key="titleColor" white="0.66666666669999997" alpha="1" colorSpace="calibratedWhite"/>
                                                         </state>
-                                                        <connections>
-                                                            <action selector="touchOtherCommand:" destination="BYZ-38-t0r" eventType="touchDown" id="y2V-tN-clk"/>
-                                                        </connections>
                                                     </button>
                                                 </subviews>
                                             </stackView>
@@ -936,7 +927,7 @@
                                                             <color key="titleColor" white="0.66666666669999997" alpha="1" colorSpace="calibratedWhite"/>
                                                         </state>
                                                         <connections>
-                                                            <action selector="touchOtherCommand:" destination="BYZ-38-t0r" eventType="touchDown" id="xzi-pB-tGG"/>
+                                                            <action selector="touchArithmeticOperation:" destination="BYZ-38-t0r" eventType="touchDown" id="cSF-EA-1sd"/>
                                                         </connections>
                                                     </button>
                                                 </subviews>

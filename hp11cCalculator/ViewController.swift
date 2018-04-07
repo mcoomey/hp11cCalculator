@@ -283,7 +283,6 @@ class ViewController: UIViewController {
     }
     
     // format the display during user input with proper thousands separators
-    
     func addCommasToDisplayBuffer(_ buffer: String) -> String {
         var formattedDisplay: String = buffer
         var idx: Int
@@ -387,6 +386,31 @@ class ViewController: UIViewController {
         printDebugInfo()
     }
     
+    
+    @IBAction func touchArithmeticOperation(_ sender: UIButton) {
+        printDebugInfo(message: "--> touchAritmeticOperation")
+        impact.impactOccurred()
+
+        let operation = sender.currentTitle!
+
+        if functionmode == keymode.normalmode {
+            switch userTypingInputMode {
+                
+            case .idle, .typingWholePart, .typingFracPart, .typingExponPart:
+                performEnteredCommand(sender)
+
+            case .pendingKeystroke:
+                commandBuffer.append(operation)
+            }
+            
+        } else {
+            performEnteredCommand(sender)
+        }
+        printDebugInfo(message: "touchAritmeticOperation-->")
+
+    }
+    
+    
     @IBAction func touchCHS(_ sender: UIButton) {
         impact.impactOccurred()
         if functionmode == keymode.normalmode {
@@ -416,12 +440,13 @@ class ViewController: UIViewController {
                 display.text = addCommasToDisplayBuffer(inputBuffer)
                 
             case .pendingKeystroke:
-                commandBuffer.append(sender.currentTitle!)
                 userTypingInputMode = .idle
                 commandBuffer.removeAll()
             }
             
-        } else {  // alternate function key was typed
+        } else {  // alternate function key was typed so trash any previous multi-key commands and perform new command
+            userTypingInputMode = .idle
+            commandBuffer.removeAll()
             performEnteredCommand(sender)
         }
         printDebugInfo()
@@ -483,7 +508,6 @@ class ViewController: UIViewController {
         printDebugInfo()
     }
     
-    
     @IBAction func touchEEX(_ sender: UIButton) {
         impact.impactOccurred()
         if functionmode == keymode.normalmode {
@@ -513,8 +537,6 @@ class ViewController: UIViewController {
         }
         printDebugInfo()
     }
-    
-    
     
     @IBAction func touchEnter(_ sender: UIButton) {
         impact.impactOccurred()
