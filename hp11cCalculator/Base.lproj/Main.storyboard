@@ -76,6 +76,9 @@
                                                         <state key="normal" title="√">
                                                             <color key="titleColor" white="0.66666666669999997" alpha="1" colorSpace="calibratedWhite"/>
                                                         </state>
+                                                        <connections>
+                                                            <action selector="touchSingleKeyCommand:" destination="BYZ-38-t0r" eventType="touchDown" id="y1Y-kw-tBV"/>
+                                                        </connections>
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="a1u-vm-Ube">
                                                         <rect key="frame" x="70" y="0.0" width="54" height="34"/>
@@ -84,6 +87,9 @@
                                                         <state key="normal" title="eᵡ">
                                                             <color key="titleColor" white="0.66666666669999997" alpha="1" colorSpace="calibratedWhite"/>
                                                         </state>
+                                                        <connections>
+                                                            <action selector="touchSingleKeyCommand:" destination="BYZ-38-t0r" eventType="touchDown" id="rKx-Nq-dTX"/>
+                                                        </connections>
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Jq2-i8-P8l">
                                                         <rect key="frame" x="140" y="0.0" width="54" height="34"/>
@@ -92,6 +98,9 @@
                                                         <state key="normal" title="10ᵡ">
                                                             <color key="titleColor" white="0.66666666669999997" alpha="1" colorSpace="calibratedWhite"/>
                                                         </state>
+                                                        <connections>
+                                                            <action selector="touchSingleKeyCommand:" destination="BYZ-38-t0r" eventType="touchDown" id="GuJ-SM-0bW"/>
+                                                        </connections>
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2Ve-6m-3qn">
                                                         <rect key="frame" x="210" y="0.0" width="54" height="34"/>
@@ -100,6 +109,9 @@
                                                         <state key="normal" title="Yᵡ">
                                                             <color key="titleColor" white="0.66666666669999997" alpha="1" colorSpace="calibratedWhite"/>
                                                         </state>
+                                                        <connections>
+                                                            <action selector="touchSingleKeyCommand:" destination="BYZ-38-t0r" eventType="touchDown" id="Djl-HD-R69"/>
+                                                        </connections>
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mRm-tF-S8p">
                                                         <rect key="frame" x="280" y="0.0" width="54" height="34"/>
@@ -108,6 +120,9 @@
                                                         <state key="normal" title="1/x">
                                                             <color key="titleColor" white="0.66666666669999997" alpha="1" colorSpace="calibratedWhite"/>
                                                         </state>
+                                                        <connections>
+                                                            <action selector="touchSingleKeyCommand:" destination="BYZ-38-t0r" eventType="touchDown" id="Z1l-MK-XDa"/>
+                                                        </connections>
                                                     </button>
                                                 </subviews>
                                             </stackView>
@@ -200,6 +215,9 @@
                                                         <state key="normal" title="SST">
                                                             <color key="titleColor" white="0.66666666669999997" alpha="1" colorSpace="calibratedWhite"/>
                                                         </state>
+                                                        <connections>
+                                                            <action selector="touchSingleKeyCommand:" destination="BYZ-38-t0r" eventType="touchDown" id="OK8-ua-3Vz"/>
+                                                        </connections>
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CfP-uA-1bA">
                                                         <rect key="frame" x="70" y="0.0" width="54" height="34"/>
@@ -208,6 +226,9 @@
                                                         <state key="normal" title="GTO">
                                                             <color key="titleColor" white="0.66666666669999997" alpha="1" colorSpace="calibratedWhite"/>
                                                         </state>
+                                                        <connections>
+                                                            <action selector="touchSingleKeyCommand:" destination="BYZ-38-t0r" eventType="touchDown" id="Rin-pX-Rbg"/>
+                                                        </connections>
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="k16-nV-CqR">
                                                         <rect key="frame" x="140" y="0.0" width="54" height="34"/>
@@ -216,6 +237,9 @@
                                                         <state key="normal" title="SIN">
                                                             <color key="titleColor" white="0.66666666669999997" alpha="1" colorSpace="calibratedWhite"/>
                                                         </state>
+                                                        <connections>
+                                                            <action selector="touchSingleKeyCommand:" destination="BYZ-38-t0r" eventType="touchDown" id="fP2-bf-BYd"/>
+                                                        </connections>
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2wn-kT-y6j">
                                                         <rect key="frame" x="210" y="0.0" width="54" height="34"/>
@@ -224,6 +248,9 @@
                                                         <state key="normal" title="COS">
                                                             <color key="titleColor" white="0.66666666669999997" alpha="1" colorSpace="calibratedWhite"/>
                                                         </state>
+                                                        <connections>
+                                                            <action selector="touchSingleKeyCommand:" destination="BYZ-38-t0r" eventType="touchDown" id="PCN-RB-Ayy"/>
+                                                        </connections>
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EG0-TB-XYh">
                                                         <rect key="frame" x="280" y="0.0" width="54" height="34"/>
@@ -232,6 +259,9 @@
                                                         <state key="normal" title="TAN">
                                                             <color key="titleColor" white="0.66666666669999997" alpha="1" colorSpace="calibratedWhite"/>
                                                         </state>
+                                                        <connections>
+                                                            <action selector="touchSingleKeyCommand:" destination="BYZ-38-t0r" eventType="touchDown" id="rmC-6X-ZpC"/>
+                                                        </connections>
                                                     </button>
                                                 </subviews>
                                             </stackView>
@@ -324,6 +354,9 @@
                                                         <state key="normal" title="R/S">
                                                             <color key="titleColor" white="0.66666666669999997" alpha="1" colorSpace="calibratedWhite"/>
                                                         </state>
+                                                        <connections>
+                                                            <action selector="touchSingleKeyCommand:" destination="BYZ-38-t0r" eventType="touchDown" id="HhR-h1-TXl"/>
+                                                        </connections>
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="T7w-vs-eSQ">
                                                         <rect key="frame" x="70" y="0.0" width="54" height="34"/>
@@ -333,7 +366,7 @@
                                                             <color key="titleColor" white="0.66666666669999997" alpha="1" colorSpace="calibratedWhite"/>
                                                         </state>
                                                         <connections>
-                                                            <action selector="touchOtherCommand:" destination="BYZ-38-t0r" eventType="touchDown" id="Bgj-vD-55i"/>
+                                                            <action selector="touchSingleKeyCommand:" destination="BYZ-38-t0r" eventType="touchDown" id="kvE-Vj-NJ1"/>
                                                         </connections>
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ef4-pm-rtQ">
@@ -343,6 +376,9 @@
                                                         <state key="normal" title="R↓">
                                                             <color key="titleColor" white="0.66666666669999997" alpha="1" colorSpace="calibratedWhite"/>
                                                         </state>
+                                                        <connections>
+                                                            <action selector="touchSingleKeyCommand:" destination="BYZ-38-t0r" eventType="touchDown" id="c2Z-ht-Daw"/>
+                                                        </connections>
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ztx-lu-oFi">
                                                         <rect key="frame" x="210" y="0.0" width="54" height="34"/>
@@ -352,7 +388,7 @@
                                                             <color key="titleColor" white="0.66666666669999997" alpha="1" colorSpace="calibratedWhite"/>
                                                         </state>
                                                         <connections>
-                                                            <action selector="touchXexchangeY:" destination="BYZ-38-t0r" eventType="touchDown" id="J2O-ds-9qj"/>
+                                                            <action selector="touchSingleKeyCommand:" destination="BYZ-38-t0r" eventType="touchDown" id="hbL-fE-3jl"/>
                                                         </connections>
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NB7-FE-6Or">
@@ -590,6 +626,9 @@
                                                         <state key="normal" title="÷">
                                                             <color key="titleColor" white="0.66666666669999997" alpha="1" colorSpace="calibratedWhite"/>
                                                         </state>
+                                                        <connections>
+                                                            <action selector="touchArithmeticOperation:" destination="BYZ-38-t0r" eventType="touchUpInside" id="3Sv-xI-BSB"/>
+                                                        </connections>
                                                     </button>
                                                 </subviews>
                                             </stackView>
@@ -703,6 +742,9 @@
                                                         <state key="normal" title="×">
                                                             <color key="titleColor" white="0.66666666669999997" alpha="1" colorSpace="calibratedWhite"/>
                                                         </state>
+                                                        <connections>
+                                                            <action selector="touchArithmeticOperation:" destination="BYZ-38-t0r" eventType="touchUpInside" id="UeY-Z0-RDi"/>
+                                                        </connections>
                                                     </button>
                                                 </subviews>
                                             </stackView>
@@ -816,6 +858,9 @@
                                                         <state key="normal" title="−">
                                                             <color key="titleColor" white="0.66666666669999997" alpha="1" colorSpace="calibratedWhite"/>
                                                         </state>
+                                                        <connections>
+                                                            <action selector="touchArithmeticOperation:" destination="BYZ-38-t0r" eventType="touchUpInside" id="ANC-7g-CaP"/>
+                                                        </connections>
                                                     </button>
                                                 </subviews>
                                             </stackView>
@@ -918,6 +963,9 @@
                                                         <state key="normal" title="∑+">
                                                             <color key="titleColor" white="0.66666666669999997" alpha="1" colorSpace="calibratedWhite"/>
                                                         </state>
+                                                        <connections>
+                                                            <action selector="touchSingleKeyCommand:" destination="BYZ-38-t0r" eventType="touchDown" id="9fn-rb-HGy"/>
+                                                        </connections>
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="g61-Hg-ccw">
                                                         <rect key="frame" x="210" y="0.0" width="54" height="34"/>
@@ -1051,7 +1099,7 @@
                                                     <color key="titleColor" white="0.66666666669999997" alpha="1" colorSpace="calibratedWhite"/>
                                                 </state>
                                                 <connections>
-                                                    <action selector="touchRegisterCommand:" destination="BYZ-38-t0r" eventType="touchDown" id="PRR-6j-yZP"/>
+                                                    <action selector="touchRegisterKey:" destination="BYZ-38-t0r" eventType="touchUpInside" id="qR7-9x-3na"/>
                                                 </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Een-bn-ukh">
@@ -1062,7 +1110,7 @@
                                                     <color key="titleColor" white="0.66666666669999997" alpha="1" colorSpace="calibratedWhite"/>
                                                 </state>
                                                 <connections>
-                                                    <action selector="touchRegisterCommand:" destination="BYZ-38-t0r" eventType="touchDown" id="njP-xM-QOe"/>
+                                                    <action selector="touchRegisterKey:" destination="BYZ-38-t0r" eventType="touchUpInside" id="uIM-RU-cgF"/>
                                                 </connections>
                                             </button>
                                         </subviews>

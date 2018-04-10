@@ -215,7 +215,10 @@ class ViewController: UIViewController {
     
     private var brain = CalculatorBrain()
     
+    
+    //*************************************************************************************
     // when the view loads build arrays of labels and buttons
+
     override func viewDidLoad() {
         super.viewDidLoad()
         UIView.setAnimationsEnabled(false)  // animation just slows the display!
@@ -271,7 +274,10 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
+    
+    //*************************************************************************************
     // print out the debug info to the console
+
     func printDebugInfo(message: String = "") {
         print("==================================\(message)==========================================")
         print ("inputBuffer = \(inputBuffer)")
@@ -282,7 +288,10 @@ class ViewController: UIViewController {
         print("altStorageRegisters = \(brain.altStorageRegister)")
     }
     
+    
+    //*************************************************************************************
     // format the display during user input with proper thousands separators
+
     func addCommasToDisplayBuffer(_ buffer: String) -> String {
         var formattedDisplay: String = buffer
         var idx: Int
@@ -306,8 +315,9 @@ class ViewController: UIViewController {
         return formattedDisplay
     }
     
+    //*************************************************************************************
     // set up display mode as input by user
-    
+
     func setDisplayMode(mode: [String]) {
         print("Setting displayMode: \(mode)")
         fixedDecimalPlaces = Int(mode[1])!
@@ -323,6 +333,9 @@ class ViewController: UIViewController {
         }
     }
 
+    
+    //*************************************************************************************
+    
     @IBAction func touchDigit(_ sender: UIButton) {
         impact.impactOccurred()
         if functionmode == keymode.normalmode {
@@ -366,7 +379,7 @@ class ViewController: UIViewController {
                     
                 } else if registerCommands.contains(commandBuffer[0]){
                     // do register command
-                    performEnteredCommand(sender)
+                    processCommandBuffer(sender)
                 }
                 commandBuffer.removeAll()
             }
@@ -378,7 +391,7 @@ class ViewController: UIViewController {
                 commandBuffer.append(sender.currentTitle!)
                 userTypingInputMode = .pendingKeystroke
             } else {
-                performEnteredCommand(sender)
+                processCommandBuffer(sender)
             }
             functionmode = keymode.normalmode
             updateKeyTitles()
@@ -386,6 +399,8 @@ class ViewController: UIViewController {
         printDebugInfo()
     }
     
+    
+    //*************************************************************************************
     
     @IBAction func touchArithmeticOperation(_ sender: UIButton) {
         printDebugInfo(message: "--> touchAritmeticOperation")
@@ -397,19 +412,21 @@ class ViewController: UIViewController {
             switch userTypingInputMode {
                 
             case .idle, .typingWholePart, .typingFracPart, .typingExponPart:
-                performEnteredCommand(sender)
+                processCommandBuffer(sender)
 
             case .pendingKeystroke:
                 commandBuffer.append(operation)
             }
             
         } else {
-            performEnteredCommand(sender)
+            processCommandBuffer(sender)
         }
         printDebugInfo(message: "touchAritmeticOperation-->")
 
     }
     
+    
+    //*************************************************************************************
     
     @IBAction func touchCHS(_ sender: UIButton) {
         impact.impactOccurred()
@@ -447,10 +464,13 @@ class ViewController: UIViewController {
         } else {  // alternate function key was typed so trash any previous multi-key commands and perform new command
             userTypingInputMode = .idle
             commandBuffer.removeAll()
-            performEnteredCommand(sender)
+            processCommandBuffer(sender)
         }
         printDebugInfo()
     }
+    
+    
+    //*************************************************************************************
     
     @IBAction func touchDecimalPoint(_ sender: UIButton) {
         impact.impactOccurred()
@@ -473,10 +493,13 @@ class ViewController: UIViewController {
            }
             
         } else {  // alternate function key was typed
-            performEnteredCommand(sender)
+            processCommandBuffer(sender)
         }
         printDebugInfo()
     }
+    
+    
+    //*************************************************************************************
     
     @IBAction func touchBackspace(_ sender: UIButton) {
         impact.impactOccurred()
@@ -503,10 +526,13 @@ class ViewController: UIViewController {
             }
             
         } else {  // alternate function key was typed
-            performEnteredCommand(sender)
+            processCommandBuffer(sender)
         }
         printDebugInfo()
     }
+    
+    
+    //*************************************************************************************
     
     @IBAction func touchEEX(_ sender: UIButton) {
         impact.impactOccurred()
@@ -533,10 +559,13 @@ class ViewController: UIViewController {
             userTypingInputMode = .typingExponPart
             
         } else {  // alternate function key was typed
-            performEnteredCommand(sender)
+            processCommandBuffer(sender)
         }
         printDebugInfo()
     }
+    
+    
+    //*************************************************************************************
     
     @IBAction func touchEnter(_ sender: UIButton) {
         impact.impactOccurred()
@@ -550,18 +579,24 @@ class ViewController: UIViewController {
             display.text = numberFormatter.string(for: brain.stack.top())!
             
         } else {  // alternate function key was typed
-            performEnteredCommand(sender)
+            processCommandBuffer(sender)
         }
         printDebugInfo()
     }
     
-    @IBAction func touchOtherCommand(_ sender: UIButton) {
+    
+    //*************************************************************************************
+    
+    @IBAction func touchSingleKeyCommand(_ sender: UIButton) {
         impact.impactOccurred()
-        performEnteredCommand(sender)
+        processSimpleKey(sender.currentTitle!)
         printDebugInfo()
     }
     
-    @IBAction func touchRegisterCommand(_ sender: UIButton) {
+    //*************************************************************************************
+    
+
+    @IBAction func touchRegisterKey(_ sender: UIButton) {
         impact.impactOccurred()
         if functionmode == keymode.normalmode {
             userTypingInputMode = .pendingKeystroke
@@ -569,15 +604,12 @@ class ViewController: UIViewController {
             commandBuffer.append(sender.currentTitle!)
             
         } else {  // alternate function key was typed
-            performEnteredCommand(sender)
+            processSimpleKey(sender.currentTitle!)
         }
         printDebugInfo()
     }
     
-    @IBAction func touchXexchangeY(_ sender: UIButton) {
-        impact.impactOccurred()
-        performEnteredCommand(sender)
-    }
+    //*************************************************************************************
     
     @IBAction func touchOn(_ sender: UIButton) {
         impact.impactOccurred()
@@ -591,9 +623,11 @@ class ViewController: UIViewController {
         }
     }
     
-    @IBAction func performEnteredCommand(_ sender: UIButton) {
-        printDebugInfo(message: "-->performEnteredCommand(\(sender.currentTitle!))")
-        print("performEnteredCommand:\(sender.currentTitle!)")
+    
+    //*************************************************************************************
+    
+    func processCommandBuffer(_ sender: UIButton) {
+        printDebugInfo(message: "-->processCommandBuffer(\(sender.currentTitle!))")
 
         // if user was typing input then push it onto the stack
         if userTypingInputMode != .idle {
@@ -611,7 +645,7 @@ class ViewController: UIViewController {
         if commandBuffer.isEmpty {
             commandBuffer.append(sender.currentTitle!)
         }
-        if brain.performOperation(command: commandBuffer) {
+        if brain.performOperation(opCode: commandBuffer[0]) {
             display.text = numberFormatter.string(for: brain.stack.top())!
         } else {
             display.text = "Error"
@@ -623,7 +657,38 @@ class ViewController: UIViewController {
         functionmode = keymode.normalmode
         updateKeyTitles()
     }
+
     
+    //*************************************************************************************
+    
+    func processSimpleKey(_ operation: String) {
+        
+        // if user was typing input then push it onto the stack
+        if userTypingInputMode != .idle {
+            let currentInput = Double(inputBuffer) ?? 0.0
+            brain.stack.push(currentInput)
+            userTypingInputMode = .idle
+        }
+        
+        // abort any incomplete multi-key commands
+        commandBuffer.removeAll()
+        
+        // now have the calculator brain perform the operation
+        if brain.performOperation(opCode: operation) {
+            display.text = numberFormatter.string(for: brain.stack.top())!
+        } else {
+            display.text = "Error"
+        }
+        
+        // restore system to idle state
+        inputBuffer.removeAll()
+        commandBuffer.removeAll()
+        functionmode = keymode.normalmode
+        updateKeyTitles()
+
+    }
+
+    //*************************************************************************************
     
     func updateKeyTitles() {
         switch functionmode {
@@ -672,6 +737,10 @@ class ViewController: UIViewController {
         
         
     }
+
+
+    //*************************************************************************************
+    
     @IBAction func alternateFkeyDown(_ sender: UIButton) {
         impact.impactOccurred()
         
@@ -682,6 +751,9 @@ class ViewController: UIViewController {
         }
         updateKeyTitles()
     }
+    
+
+    //*************************************************************************************
     
     @IBAction func alternateGkeyDown(_ sender: UIButton) {
         impact.impactOccurred()
@@ -694,4 +766,8 @@ class ViewController: UIViewController {
     }
     
 }
+
+
+//*************************************************************************************
+
 
