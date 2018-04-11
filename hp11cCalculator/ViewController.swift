@@ -177,12 +177,14 @@ class ViewController: UIViewController {
     var functionmode = keymode.normalmode
     
     // set up defaut display modes
-    enum degreeUnits {
+    enum angleUnits {
         case degrees
         case radians
         case grads
     }
-    var displayDegreesUnits = degreeUnits.degrees
+    
+    let angleUnitsLookup = ["DEG" : angleUnits.degrees, "RAD" : angleUnits.radians, "GRD" : angleUnits.grads]
+    var displayAngleUnits = angleUnits.degrees
     
     enum numberMode {
         case fix
@@ -266,7 +268,7 @@ class ViewController: UIViewController {
         
         inputBuffer = ""
         display.text = numberFormatter.string(for: brain.stack.top())!
-
+        modeDisplay.text = " "
     }
 
     override func didReceiveMemoryWarning() {
@@ -368,7 +370,7 @@ class ViewController: UIViewController {
                 display.text = addCommasToDisplayBuffer(inputBuffer)
 
             case .pendingKeystroke:
-                // all pendingKeystroke commands are terminated with a digit input
+                // pendingKeystroke commands are terminated with a digit or (i) input
                 userTypingInputMode = .idle
                 commandBuffer.append(sender.currentTitle!)
                 let displayCommands = ["FIX", "SCI", "ENG"]
@@ -379,19 +381,27 @@ class ViewController: UIViewController {
                     
                 } else if registerCommands.contains(commandBuffer[0]){
                     // do register command
-                    processCommandBuffer(sender)
+                    xxxprocessCommandBuffer(sender)
                 }
                 commandBuffer.removeAll()
             }
             
         } else {  // alternate function key was typed
             let compoundCommands = ["FIX", "SCI", "ENG", "STO", "RCL"]
+            let angleUnitsCommands = ["DEG", "RAD", "GRD"]
             let command = sender.currentTitle!
             if compoundCommands.contains(command){
-                commandBuffer.append(sender.currentTitle!)
+                commandBuffer.append(command)
                 userTypingInputMode = .pendingKeystroke
+                
+            } else if angleUnitsCommands.contains(command){
+                if let units = angleUnitsLookup[command] {
+                    displayAngleUnits = units
+                    modeDisplay.text = command
+                }
+                
             } else {
-                processCommandBuffer(sender)
+                processSingleKeyCommand(command)
             }
             functionmode = keymode.normalmode
             updateKeyTitles()
@@ -412,14 +422,14 @@ class ViewController: UIViewController {
             switch userTypingInputMode {
                 
             case .idle, .typingWholePart, .typingFracPart, .typingExponPart:
-                processCommandBuffer(sender)
+                processSingleKeyCommand(operation)
 
             case .pendingKeystroke:
                 commandBuffer.append(operation)
             }
             
         } else {
-            processCommandBuffer(sender)
+            processSingleKeyCommand(operation)
         }
         printDebugInfo(message: "touchAritmeticOperation-->")
 
@@ -464,7 +474,7 @@ class ViewController: UIViewController {
         } else {  // alternate function key was typed so trash any previous multi-key commands and perform new command
             userTypingInputMode = .idle
             commandBuffer.removeAll()
-            processCommandBuffer(sender)
+            processSingleKeyCommand(sender.currentTitle!)
         }
         printDebugInfo()
     }
@@ -493,7 +503,7 @@ class ViewController: UIViewController {
            }
             
         } else {  // alternate function key was typed
-            processCommandBuffer(sender)
+            processSingleKeyCommand(sender.currentTitle!)
         }
         printDebugInfo()
     }
@@ -526,7 +536,7 @@ class ViewController: UIViewController {
             }
             
         } else {  // alternate function key was typed
-            processCommandBuffer(sender)
+            processSingleKeyCommand(sender.currentTitle!)
         }
         printDebugInfo()
     }
@@ -559,7 +569,7 @@ class ViewController: UIViewController {
             userTypingInputMode = .typingExponPart
             
         } else {  // alternate function key was typed
-            processCommandBuffer(sender)
+            processSingleKeyCommand(sender.currentTitle!)
         }
         printDebugInfo()
     }
@@ -579,7 +589,7 @@ class ViewController: UIViewController {
             display.text = numberFormatter.string(for: brain.stack.top())!
             
         } else {  // alternate function key was typed
-            processCommandBuffer(sender)
+            processSingleKeyCommand(sender.currentTitle!)
         }
         printDebugInfo()
     }
@@ -589,7 +599,7 @@ class ViewController: UIViewController {
     
     @IBAction func touchSingleKeyCommand(_ sender: UIButton) {
         impact.impactOccurred()
-        processSimpleKey(sender.currentTitle!)
+        processSingleKeyCommand(sender.currentTitle!)
         printDebugInfo()
     }
     
@@ -604,7 +614,7 @@ class ViewController: UIViewController {
             commandBuffer.append(sender.currentTitle!)
             
         } else {  // alternate function key was typed
-            processSimpleKey(sender.currentTitle!)
+            processSingleKeyCommand(sender.currentTitle!)
         }
         printDebugInfo()
     }
@@ -626,7 +636,7 @@ class ViewController: UIViewController {
     
     //*************************************************************************************
     
-    func processCommandBuffer(_ sender: UIButton) {
+    func xxxprocessCommandBuffer(_ sender: UIButton) {
         printDebugInfo(message: "-->processCommandBuffer(\(sender.currentTitle!))")
 
         // if user was typing input then push it onto the stack
@@ -661,11 +671,12 @@ class ViewController: UIViewController {
     
     //*************************************************************************************
     
-    func processSimpleKey(_ operation: String) {
+    func processSingleKeyCommand(_ operation: String) {
         
         // if user was typing input then push it onto the stack
         if userTypingInputMode != .idle {
             let currentInput = Double(inputBuffer) ?? 0.0
+            brain.lstX = currentInput
             brain.stack.push(currentInput)
             userTypingInputMode = .idle
         }

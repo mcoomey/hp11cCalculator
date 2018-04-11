@@ -12,10 +12,13 @@ struct CalculatorBrain {
     var storageRegister: [Double] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     var altStorageRegister: [Double] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     var stack = CalculatorStack(stack: [0.0, 0.0, 0.0, 0.0])
+    var lstX: Double = 0.0
     
     mutating func performOperation(opCode: String ) -> Bool {
         print("performOperation for command = \(opCode)")
-        if opCode == "π" {
+        if opCode == "LST x" {
+            stack.push(lstX)
+        } else if opCode == "π" {
             stack.push(Double.pi)
         } else if opCode == "CHS" {
             let value = stack.pop()
@@ -109,6 +112,9 @@ struct CalculatorBrain {
             stack.push(value1)
             stack.push(value2)
             
+        } else if opCode == "x!" {
+            let value1 = 1.0 + stack.pop()
+            stack.push(tgamma(value1))
         }
         
         
